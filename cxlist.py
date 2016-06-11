@@ -1,6 +1,8 @@
 #!/usr/bin/python
 
-# Print all combins of 2 from 6.
+# Print all combins of Xn from 1 to 6.
+# Add all values to be minimised to a list and then take min of list.
+# JM Wed  8 Jun 2016 11:33:35 BST
 
 import itertools
 
@@ -14,30 +16,6 @@ column_dict = {
 3 : X3list 
 }
 
-
-#'L:', len( column_dict[ I ] ),
-
-def proc_cons3(  XvalListn = [ ] ):
-	print 'PC3:', XvalListn, 'LX:', len( XvalListn )
-	x,y,z = XvalListn
-	print 'X,Y,Z:', x,y,z
-	for LCD in range( 0, len( column_dict[ x ] ), 1 ):
-		print 'ForX:', column_dict[ x ][ LCD ] 
-		print 'ForY:', column_dict[ y ][ LCD ] 
-		print 'ForZ:', column_dict[ z ][ LCD ] 
-	print
-
-
-def proc_cons2(  XvalListn = [ ] ):
-	print 'PC2List:', XvalListn, 'LX:', len( XvalListn )
-	x,y = XvalListn
-	print
-	for LCD in range( 0, len( column_dict[ x ] ), 1 ):
-		print 'ForX:', column_dict[ x ][ LCD ] 
-		print 'ForY:', column_dict[ y ][ LCD ] 
-	print
-
-
 def proc_cons1(  XvalListn = [ ] ):
 	print 'PC1:', XvalListn, 'LX:', len( XvalListn )
 	## Setting x to XvalListn doesn't work. Cos it's a tuple ???
@@ -49,15 +27,28 @@ def proc_cons1(  XvalListn = [ ] ):
 	print
 	
 def proc_cons(  XvalList = [ ] ):
-	#print 'List:', XvalList, 'LX:', len( XvalList)
+	print 'List:', XvalList, 'LX:', len( XvalList)
+	'''
 	for n in range( len( XvalList) ):
 		print 'PC N:', n,'XVn:', XvalList[ n ], 'LenXn:', len( XvalList[ n ] )
-		if ( len( XvalList[ n ] ) == 1 ):
-			proc_cons1(  XvalList[ n ] )
-		elif ( len( XvalList[ n ] ) == 2 ):
-			proc_cons2(  XvalList[ n ] )
-		elif ( len( XvalList[ n ] ) == 3 ):
-			proc_cons3(  XvalList[ n ] )			
+
+	'''
+	# XVL is the list of combins from XvalList
+	# XVLCD is the individual combin from XVL 
+	for XVL in XvalList:
+		print 'XVL:', XVL
+		for XVLCD in ( XVL ):
+			#print 'XVLCD :', XVLCD 
+			#print 'CD:', column_dict[ XVLCD ], 'Len CD:', len( column_dict[ XVLCD ] ) 
+			#print 'Letter:', column_dict[ XVLCD ][ 0 ]
+			# need to process for elements 1 & 2 as well, in turn.
+
+			Xlist_to_be_minimised = [ ]
+			for n in range( 0, len( column_dict[ XVLCD ] ), 1 ):
+				print 'XVLCD :', XVLCD , 'N:', n
+				print 'Letter:',  column_dict[ XVLCD ][ n ] 
+				#Xlist_to_be_minimised.append( column_dict[ XVLCD ][ n ] )
+			#print 'CD Xlist:', Xlist_to_be_minimised
 	print
 		
 
