@@ -10,6 +10,9 @@
 # JM Mon 20 Jun 2016 09:04:46 BST
 # Add output table.
 # JM Mon 20 Jun 2016 18:52:44 BST
+# Add ,fontsize=reqfontsize
+# Add Z-Transform of xlist to nullsd calc.
+# JM Wed 22 Jun 2016 14:34:21 BST
 
 
 from datetime import datetime
@@ -124,10 +127,12 @@ def plot_zt_graph( xlist = [], ylist = [], pltitle = 'DXY', fname = 'DXY.png' ):
 	Xmax =  3.0
 	Ymax =  3.0
 
-	#plt.figure( figsize=( 2, 2 ) ) 
-	plt.title( pltitle )
-	plt.xlabel( 'ZX' )
-	plt.ylabel( 'ZY' + str( Yval ) )
+	plt.figure( figsize=( 3, 3 ) ) 
+	# Sets size of axis ticks and numbers.
+	plt.tick_params(labelsize=6)
+	plt.title( pltitle,fontsize=reqfontsize )
+	plt.xlabel( 'ZX',fontsize=reqfontsize )
+	plt.ylabel( 'ZY' + str( Yval ),fontsize=reqfontsize )
 
 	#print 'XL:', xlist
 	#print 'YL:', ylist
@@ -182,6 +187,19 @@ def calc_ssd(  xlist, ylist, pltitle = 'DXY', fname = 'DXY.png' ):
 		#print 'SSD - D:', d, 'YL:', zylist[ XL ], 'XL:', zxlist[ XL ], 'ssd:', ssd
 	return ssd 
 
+def calc_nullsdZ( xlist, ylist, error_value ):
+# Does calc on Z-Transformed xlist.
+	nullsd = 0.0
+	zxlist = Ztransform( xlist )
+	for XL in range(0, len( xlist ), 1 ):
+		#print 'SSD - XL:', XL
+		if ( ylist[ XL ] > xlist[ XL ] ):
+			S = 1
+		else:
+			S = 0
+		nullsd += ( S *( 2 * error_value - 2 * error_value * zxlist[ XL ] ) + ( 1 - S ) * ( 2 * error_value * zxlist[ XL ] ) )**2
+	return nullsd
+	
 def calc_nullsd( xlist, ylist, error_value ):
 	nullsd = 0.0
 	for XL in range(0, len( xlist ), 1 ):
@@ -190,7 +208,7 @@ def calc_nullsd( xlist, ylist, error_value ):
 			S = 1
 		else:
 			S = 0
-		nullsd = S *( 2 * error_value - 2 * error_value * xlist[ XL ] ) + ( 1 - S ) * ( 2 * error_value * xlist[ XL ] )
+		nullsd += ( S *( 2 * error_value - 2 * error_value * xlist[ XL ] ) + ( 1 - S ) * ( 2 * error_value * xlist[ XL ] ) )**2
 	return nullsd
 	
 def proc_Dsuff(  xlist, ylist, pltitle = 'DXY', Csuff = 0.0, fname = 'DXY.png' ):
@@ -198,22 +216,22 @@ def proc_Dsuff(  xlist, ylist, pltitle = 'DXY', Csuff = 0.0, fname = 'DXY.png' )
 	msd = 0.0
 	df1 = 0.0
 	F   = 0.0
+	PVAL = 0.0
 	nullsd = 0.0
 	ssd = calc_ssd(  xlist, ylist, pltitle, fname )
 	df1 = calc_df1(  xlist, ylist )
 	
 	df2 = len( ylist )
 
-	nullsd = calc_nullsd( xlist, ylist, error_value )
+	nullsd = calc_nullsdZ( xlist, ylist, error_value )
 	emsd = nullsd / df2
 	if ( df1 > 0 ):
 		msd = ssd/df1
 		F = msd/emsd 
-	else:
-		print 'ERR - DF1 Div by Zero. F error.'
+		PVAL = f.sf ( F, df1, df2, loc=0, scale=1 ) 
+	#else:		print 'ERR - DF1 Div by Zero. F error.'
+	## Only do calcs if DF1 > 0. Error o'wise.
 
-
-	PVAL = f.sf ( F, df1, df2, loc=0, scale=1 ) 
 
 	'''
 	print 'Fname:', os.path.splitext( fname )[0]
@@ -228,7 +246,8 @@ def proc_Dsuff(  xlist, ylist, pltitle = 'DXY', Csuff = 0.0, fname = 'DXY.png' )
 	print 'Csuff:', Csuff
 	'''
 	#print 
-	print '{:>10s}'.format( os.path.splitext( fname )[0] ),
+	ProcLabel = os.path.splitext( fname )[0] 
+	print '{:>10s}'.format( ProcLabel ), 
 	print '{:>2d}'.format( Yval ),
 	print '{:>4.3f}'.format( Csuff ),
 	print '{:>6.3f}'.format( ssd ),
@@ -236,6 +255,8 @@ def proc_Dsuff(  xlist, ylist, pltitle = 'DXY', Csuff = 0.0, fname = 'DXY.png' )
 	print '{:>3.2f}'.format( PVAL ),
 	print '{:>3d}'.format( df2 )
 	#print
+	opcsv.writerow( [ ProcLabel, Yval, '{:>4.3f}'.format( Csuff ), '{:>6.3f}'.format( ssd ), 
+	'{:>11.3f}'.format( F ), '{:>3.2f}'.format( PVAL ), '{:>3d}'.format( df2 ) ] )
 
 #************** Csuff Processing ************** 
 def plot_graph( xlist = [], ylist = [], pltitle = 'XY', Csuff = 0.0, fname = 'XY.png' ):
@@ -254,23 +275,18 @@ def plot_graph( xlist = [], ylist = [], pltitle = 'XY', Csuff = 0.0, fname = 'XY
 	Ymin = 0.0
 	Xmax = 1.0
 	Ymax = 1.0
-	#plt.figure( figsize=( 2, 2 ) ) 
+	plt.figure( figsize=( 3, 3 ) ) 
+	# Sets size of axis ticks and numbers.
+	plt.tick_params(labelsize=6)
 
-	plt.title( pltitle )
-	plt.xlabel( 'X' )
-	plt.ylabel( 'Y' + str( Yval ) )
+	plt.title( pltitle,fontsize=reqfontsize )
+	plt.xlabel( 'X',fontsize=reqfontsize )
+	plt.ylabel( 'Y' + str( Yval ),fontsize=reqfontsize )
 
-	#plt.axis( [ MinXaxis, MaxXaxis, MinYaxis, MaxYaxis ] )
-	#print 'XL:', xlist
-	#print 'YL:', ylist
-	#print 'MXY:', MinXaxis, MaxXaxis, MinYaxis, MaxYaxis 
-	#print 'XMin:', Xmin, 'Xmax:', Xmax, 'Ymin:', Ymin, 'Ymax:', Ymax
-
-	#plt.plot( [ Ymin, Ymax ], 'k-', lw=2 )
 	plt.plot( [ xlist ], [ ylist ], 'rD', markersize=15 )
-	#plt.plot( [ 0.0, 1.0 ], [ 0.0, 1.0 ], 'k-', lw=2 )
+	
 	plt.plot( [ Xmin, Xmax ], [ Ymin, Ymax ], 'k-', lw=2 )
-	#plt.plot( [ MinXaxis, MaxXaxis ], [ MinYaxis, MaxYaxis ], 'k-', lw=2 )
+
 	#plt.show( )
 	#print 'Fname:', fname
 	#print 'Csuff:', Csuff
@@ -488,11 +504,18 @@ print 'Start:', datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 print 'plotting for X1-6 & Y' + str( Yval ) + ' and CDYval' + str( CDYval )
 
 read_file()
-#varlist = [ 'X1', 'X2', 'X3', 'X4', 'X5', 'X6' ]
+
 varlist = [ 1,2,3,4,5,6 ]
 
 damping_factor   = 0.01
-error_value      = 0.05
+error_value      = 0.1
+reqfontsize      = 8
+OPCSVfile        = 'outputX1to6_Y' + str( Yval ) + '.csv'
+
+print 'Output to:', OPCSVfile 
+
+opcsv = csv.writer( open( OPCSVfile, 'wb' ) )
+
 
 # Headers for output.
 print '{:>10s}'.format( 'Label' ),
@@ -503,8 +526,13 @@ print '{:^10s}'.format( 'F' ),
 print '{:<5s}'.format( 'PVAL' ),
 print '{:<3s}'.format( 'Num' ),
 print
+
+opcsv.writerow( [ 'Label', 'Y', 'Csuff', 'SSD', 'F', 'PVAL', 'Num' ] )
+
 for Xindex in range( 1, len(varlist) + 1 ):
 	XvalList = list( itertools.combinations( varlist, Xindex ) )
 	#print 'List:', XvalList, 'LX:', len( XvalList)
 	proc_cons( XvalList ) 
-		
+
+# Close output file.  opcsv.close()
+
