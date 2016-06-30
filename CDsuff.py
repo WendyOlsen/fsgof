@@ -26,17 +26,7 @@
 # Print all configurations involving X from 1 to 6.
 # Copy of cx.py with read of csv file added.
 # JM 2016/06/07
-# Copy of cxr.py.  
-# JM 2016/06/16
-## Add diff value of Y to be input. Y1 to Y4.
-# Add in Dsuff calcs.
-# JM Mon 20 Jun 2016 09:04:46 BST
-# Add output table.
-# JM Mon 20 Jun 2016 18:52:44 BST
-# Add ,fontsize=reqfontsize
-# Add Z-Transform of xlist to nullsd calc.
-# JM Wed 22 Jun 2016 14:34:21 BST
-
+# WO 2016/06/30 simplified the file.
 
 from datetime import datetime
 from scipy.stats import norm, f
@@ -199,24 +189,11 @@ def calc_ssd(  xlist, ylist, pltitle = 'DXY', fname = 'DXY.png' ):
 		
 	return ssd 
 
-def calc_nullsd3( xlist, ylist, error_value ):	
+def calc_nullsd2( xlist, ylist, error_value ):	
 # Use different calculation method for nullsd
 	nullsd = 0.0
 	df2 = len( ylist )
 	nullsd = df2 * error_value**2
-	return nullsd
-	
-def calc_nullsd2( xlist, ylist, error_value ):
-# Does calc on Z-Transformed xlist.
-	nullsd = 0.0
-	zxlist = Ztransform( xlist )
-	for XL in range(0, len( xlist ), 1 ):
-		
-		if ( ylist[ XL ] > xlist[ XL ] ):
-			S = 1
-		else:
-			S = 0
-		nullsd += ( S *( 2 * error_value - 2 * error_value * zxlist[ XL ] ) + ( 1 - S ) * ( 2 * error_value * zxlist[ XL ] ) )**2
 	return nullsd
 	
 def calc_nullsd1( xlist, ylist, error_value ):
@@ -242,7 +219,7 @@ def proc_Dsuff(  xlist, ylist, pltitle = 'DXY', Csuff = 0.0, fname = 'DXY.png' )
 	
 	df2 = len( ylist )
 
-	nullsd = calc_nullsd3( xlist, ylist, error_value )
+	nullsd = calc_nullsd2( xlist, ylist, error_value )
 	emsd = nullsd 
 	if ( df1 > 0 ):
 		msd = ssd/df1
@@ -273,10 +250,11 @@ def proc_Dsuff(  xlist, ylist, pltitle = 'DXY', Csuff = 0.0, fname = 'DXY.png' )
 	print '{:>8.3f}'.format( ssd ),
 	print '{:>11.3f}'.format( F ),
 	print '{:>3.2f}'.format( PVAL ),
+	print '{:>3.2f}'.format( df1 )
 	print '{:>3d}'.format( df2 )
 	#print
 	opcsv.writerow( [ ProcLabel, Yval, '{:>4.3f}'.format( Csuff ), '{:>8.3f}'.format( ssd ), 
-	'{:>11.3f}'.format( F ), '{:>3.2f}'.format( PVAL ), '{:>3d}'.format( df2 ) ] )
+	'{:>11.3f}'.format( F ), '{:>3.2f}'.format( PVAL ), '{:>3.2f}'.format( df1 ), '{:>3d}'.format( df2 ) ] )
 
 #************** Csuff Processing ************** 
 def plot_graph( xlist = [], ylist = [], pltitle = 'XY', Csuff = 0.0, fname = 'XY.png' ):
@@ -514,7 +492,7 @@ print '{:<5s}'.format( 'PVAL' ),
 print '{:<3s}'.format( 'Num' ),
 print
 
-opcsv.writerow( [ 'Config', 'Y', 'Csuff', 'Dsuff', 'F', 'PVAL', 'Num' ] )
+opcsv.writerow( [ 'Config', 'Y', 'Csuff', 'Dsuff', 'F', 'PVAL', 'Df1', 'Num' ] )
 
 for Xindex in range( 1, len(varlist) + 1 ):
 	XvalList = list( itertools.combinations( varlist, Xindex ) )
