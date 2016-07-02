@@ -1,19 +1,17 @@
-# fsgof
-FSGOF Source Code
-Instructions for Use:
-How to run the python code for fuzzy set goodness of fit tables and plots.
-.Prep.  Put the python anaconda programmes onto your c: drive to run, e.g. in a c:\python directory.
-.Prep the file area for your work:  md c:\fsgof  and check it by dir.  These are run from the command line, or on a MAC or Linux, do it as appropriate.
-.Command line.  The programme we wrote is command-line driven.  Below you find the format for this single line, with some options.  You will need to be clear about where the input is coming from, and this director is key.  That’s where the output should go.  The plots will go in the directory from which you run the comments.  The table of output is called here a doc file, but it is in txt format and can also be called a rtf file if you wish (but not docx nor anything else). There is another table of output in csv format:  this is the same file, but translated into csv, and this is the one you name in your command line.
-.Get the cursor in the right area.  On Windows machines this is done as:  START > COMMAND PROMPT then cd c:\fsgof  using our suggested area.  If you didn’t yet create this directory, return to PREP stage.
-Suppose I have put the Python Anaconda programmes on a chip, which is F: drive.
-.run the command like this:
-C:\fsgof> f:\python.exe CDsuff.py c:\data\****.csv 4 > op4.doc
-The command options are as follows:
-Python  inputfilename  Ychoice “>” [that means output the text file to] textfileoutputfilename
-Thus another option is:  
+**How to run the python code for fuzzy set goodness of fit tables and plots.**              
+..Prep.  Put the python anaconda programmes onto your c: drive to run, e.g. in a c:\python directory.    
+..Prep the file area for your work:  md c:\fsgof  and check it by dir.  These are run from the command line. On a MAC or Linux, do this as usual.       
+..Command line.  The programme we wrote is command-line driven.  Below you find the format for this single line, with some options.  You will need to specify where the input is coming from, and this directory is key.  That’s also where most of the output will go.  The plots will go in the directory from which you run the comments.  The table of output is called here a doc file, but it is in txt format.       
+..Key output. There is another table of output in csv format. This is the same as the txt file, but translated into csv. This file is the one you name in your command line.         
+..Get the cursor in the right area.  On Windows machines use:  START > COMMAND PROMPT then cd c:\fsgof using our suggested name.  If you didn’t yet create this directory, return to PREP stage.       
+..Example:  Suppose I have put the Python Anaconda programmes on a chip, which is F: drive.       
+..Run the command like this:      
+C:\fsgof> f:\python.exe CDsuff.py c:\data\****.csv 4 > op4.doc       
+The command options are as follows:       
+Python  inputfilename  Ychoice “>” [that means output the text file to] textfileoutputfilename       
+Thus another option is:         
 
-C:\fsgof>  python.exe CDsuff.py c:\fsgof\inputIndia.csv 1 > outputforY1India.doc
+C:\fsgof>  python.exe CDsuff.py c:\fsgof\inputIndia.csv 1 > outputforY1India.doc       
 NOTES: 
 # Contact developers John Mcloughlin and Wendy Olsen of the
 # Unversity of Manchester via the Facebook Group:
